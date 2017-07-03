@@ -1,0 +1,5 @@
+*.scss
+.sass-cache
+.buildpath
+.project
+.settings
