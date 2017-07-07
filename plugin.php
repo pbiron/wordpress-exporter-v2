@@ -137,17 +137,24 @@ add_action( 'admin_menu', function () {
 	);
 });
 
+/**
+ * Add an HTML <base> to <head> so that the rest of the admin
+ * menus work correctly.
+ *
+ * This is necessary because we are cheating in how we add our menu item above.
+ */
 add_action( 'admin_head', function () {
-	/*
-	 * add an HTML <base> to <head> so that the rest of the admin
-	 * menus work correctly...this is necessary because we are cheating
-	 * in how we add our menu item above.
-	 */
+	$export = 'export.php';
+	$here = '/' . PLUGINDIR . '/' . basename ( __DIR__ ) . "/{$export}";
+	if ( $here !== $_SERVER['REQUEST_URI'] ) {
+		return;
+	}
+
 	if ( is_network_admin() ) {
-		$href = network_admin_url();
+		$href = network_admin_url( $export );
 	}
 	else {
-		$href = admin_url();
+		$href = admin_url( $export );
 	}
 
 	$href = esc_attr( $href );
