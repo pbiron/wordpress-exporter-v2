@@ -143,7 +143,16 @@ add_action( 'admin_head', function () {
 	 * menus work correctly...this is necessary because we are cheating
 	 * in how we add our menu item above.
 	 */
-	echo "<base href='" . admin_url() . "'/>\n";
+	if ( is_network_admin() ) {
+		$href = network_admin_url();
+	}
+	else {
+		$href = admin_url();
+	}
+
+	$href = esc_attr( $href );
+
+	echo "<base href='$href'/>\n";
 });
 
 /**
