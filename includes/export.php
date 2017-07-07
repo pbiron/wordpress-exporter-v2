@@ -905,7 +905,7 @@ function export_wp( $args ) {
 	// to allow exporting of just taxonomies, users, etc.  In that case, the plugin would also
 	// need to hook into the new 'wxr_export_rss_channel_elements' actions to do the actual
 	// exporting.
-	$where = $post_ids = $ptype = null;
+	$where = $post_ids = $ptype = $term_ids = null;
 	if ( 'all' != $args['content'] && post_type_exists( $args['content'] ) ) {
 		$ptype = get_post_type_object( $args['content'] );
 		if ( ! $ptype->can_export )
