@@ -6,6 +6,9 @@
  * Author: pbiron
  * Author URI: http://sparrowhawkcomputing.com
  * Plugin URI: https://github.com/pbiron/WordPress-Exporter
+ * License: GPLv2
+ * License URI: http://www.gnu.org/licenses/gpl-2.0.html
+ * GitHub Plugin URI: https://github.com/pbiron/WordPress-Exporter
  */
 
 /**
