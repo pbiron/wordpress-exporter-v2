@@ -33,12 +33,17 @@ Generating exports with this plugin wouldn't be very useful if you couldn't also
 [WordPress Importer Redux][] not only imports [WXR 1.3-proposed] instances, but also
 older WXR 1.0, 1.1 and 1.2 instances.
 
-Want to experiment with the hooks mentions above?  A "demo" plugin exists that demonstrates
-their use.  That plugin is available at [WordPress Exporter Redux Extension][].
+Want to experiment with the hooks mentions above?
 
+* A "demo" plugin exists that demonstrates the use of most of them.  That plugin is available at
+	[WordPress Exporter Redux Extension][].
+* A more realistic "demo" plugin exists that demonstrates exporting and importing custom tables.  That plugin is available at
+	[P2P Export/Import][].
+
+[WordPress Importer Redux]: https://github.com/pbiron/wordpress-importer-v2
 [WordPress Importer]: https://wordpress.org/plugins/wordpress-importer/
-[WordPress Importer Redux]: https://github.com/pbiron/WordPress-Importer
-[WordPress Exporter Redux Extension]: https://github.com/pbiron/WordPress-Exporter-extension
+[WordPress Exporter Redux Extension]: https://github.com/pbiron/wordpress-exporter-v2-extension
+[P2P Export/Import]: https://github.com/pbiron/p2p-export-import
 [WXR 1.3-proposed]: https://github.com/pbiron/wxr/1.3-proposed
 [XML Infoset]: http://www.w3.org/TR/xml-infoset/
 [XML Schema 1.1]: https://www.w3.org/TR/xmlschema11-1
