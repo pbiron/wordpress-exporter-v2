@@ -42,7 +42,12 @@
  *     (@link https://www.w3.org/TR/xml/#NT-Char).  "intelligently", in this context,
  *     means that I'm not sure just stripping them is the correct thing, but introducing
  *     a WP-specific way of encoding them is also not a good idea (for example, would
- *     other CMS's importing a WXR instance know what to do with them?).
+ *     other CMS's importing a WXR instance know what to do with them?).  Note that
+ *     XMLWriter "unintelligently" deals with the null character ('\\\\0') since it
+ *     is just a wrapper around the XMLWriter from libxml which is written in C and,
+ *     hence, when a PHP string containing the null character is passed to
+ *     XMLWriter::text() it not only strips the null character by it terminates
+ *     the string at that point :-(
  *
  * I had started on such an XML API as part of this plugin but then decided to punt
  * on that until getting high-level feedback on the general idea.  Hence, the code
