@@ -7,6 +7,8 @@ This proposed rewrite of the standard WordPress exporter:
 
 1. Exports [WXR 1.3-proposed][] instances.
 1. Uses a real streaming XML serializer (instead of echo statements) to generate the XML.
+	Ultimately, I'd like to define a full-blown XML API.  See the `@todo` at the start of
+	./includes/export.php for some ideas on that XML API.
 1. Provides hooks that allow plugins to add extension markup to the generated WXR
 	instance, e.g., rows from custom tables that are associated with various content
 	included in the output.  
@@ -73,6 +75,9 @@ their use.  That plugin is available at [WordPress Exporter Redux Extension][].
    		[XML Schema 1.0][] is not expressive enough to capture the rules of RSS (nor the
    		WXR extensibility rules in [WXR 1.3-proposed][]), so validating
    		with a 1.0 schema would be useless, or worse.
+   1. we could also do simple XPath expressions that count the number of various elements
+   	in the generated XML.  This would mimic those parts of the current unit tests for import
+   	that contain things like `$user_count = count_users(); $this->assertEquals( 3, $user_count['total_users'] );`
 1. Incorporate the ideas for a generic [Export API](https://core.trac.wordpress.org/ticket/22435).
 1. Ultimately, I'd like to define a full-blown XML API.  See the `@todo` at the start of
 	./includes/export.php for some ideas on that XML API.  An XML API could be used by not
