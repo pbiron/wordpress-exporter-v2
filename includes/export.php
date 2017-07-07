@@ -375,7 +375,7 @@ function export_wp( $args ) {
 		// @todo is this really necessary?  The standard importer doesn't
 		// need it because it loads the entire WXR into memory and can find
 		// the parent even if it occurs after the child;
-		// neither does https://github.com/pbiron/WordPress-Importer because
+		// neither does https://github.com/pbiron/wordpress-importer-v2 because
 		// even tho it is a streaming importer it contains logic to deal
 		// with parents that occur after children.  But it is part of the
 		// standard export so I'm leaving it for now.

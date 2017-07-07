@@ -3,12 +3,12 @@
  * Plugin Name: WordPress Exporter v2
  * Description: Proposed changes to WP Core's standard exporter
  * Version: 0.2
- * Author: pbiron
+ * Author: Paul V. Biron/Sparrow Hawk Computing
  * Author URI: http://sparrowhawkcomputing.com
- * Plugin URI: https://github.com/pbiron/WordPress-Exporter
+ * Plugin URI: https://github.com/pbiron/wordpress-exporter-v2
  * License: GPLv2
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
- * GitHub Plugin URI: https://github.com/pbiron/WordPress-Exporter
+ * GitHub Plugin URI: https://github.com/pbiron/wordpress-exporter-v2
  */
 
 /**
@@ -60,13 +60,13 @@
  *    instance, e.g., rows from custom tables that are associated with various content
  *    included in the output
  *    a. these hooks are demonstrated in a "demo" plugin at
- *       https://github.com/pbiron/WordPress-Exporter-extension
+ *       https://github.com/pbiron/wordpress-exporter-v2-extension
  *
  * 4. Provides additional hooks that allow plugins that hook into the 'export filters' action
  *    that exists in the standard exporter to do actually something useful with the
  *    the 'export filters' they have added
  *    a. these hooks are demonstrated in a "demo" plugin at
- *       https://github.com/pbiron/WordPress-Exporter-extension
+ *       https://github.com/pbiron/wordpress-exporter-v2-extension
  *
  * 5. Fixes what I consider to be a few bugs in the standard exporter that are unrelated to
  *    any of the above.  For example, when exporting posts of a single post type the
