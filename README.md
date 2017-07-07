@@ -43,6 +43,7 @@ their use.  That plugin is available at [WordPress Exporter Redux Extension][].
 [XML Infoset]: http://www.w3.org/TR/xml-infoset/
 [XML Schema 1.1]: https://www.w3.org/TR/xmlschema11-1
 [XML Schema 1.0]: https://www.w3.org/TR/xmlschema-1
+[GitHub Updater]: https://github.com/afragen/github-updater
 
 ## How do I use it?
 
@@ -53,6 +54,12 @@ their use.  That plugin is available at [WordPress Exporter Redux Extension][].
 5. Follow the on-screen instructions.
 
 ## Change Log
+
+### 0.2
+
+* Fixed bug causing $term_ids to be unset when $post_ids is empty
+* Fix base/@href for Network admin screens
+* Added [GitHub Updater][] plugin header info
 
 ### 0.1
 

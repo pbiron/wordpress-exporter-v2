@@ -2,7 +2,7 @@
 /*
  * Plugin Name: WordPress Exporter v2
  * Description: Proposed changes to WP Core's standard exporter
- * Version: 0.1
+ * Version: 0.2
  * Author: pbiron
  * Author URI: http://sparrowhawkcomputing.com
  * Plugin URI: https://github.com/pbiron/WordPress-Exporter
