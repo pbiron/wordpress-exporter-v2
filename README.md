@@ -49,6 +49,7 @@ Want to experiment with the hooks mentions above?
 [XML Schema 1.1]: https://www.w3.org/TR/xmlschema11-1
 [XML Schema 1.0]: https://www.w3.org/TR/xmlschema-1
 [GitHub Updater]: https://github.com/afragen/github-updater
+[Trac Ticket 39237]: https://core.trac.wordpress.org/ticket/39237#comment:8
 
 ## How do I use it?
 
@@ -90,6 +91,8 @@ Want to experiment with the hooks mentions above?
    1. we could also do simple XPath expressions that count the number of various elements
    	in the generated XML.  This would mimic those parts of the current unit tests for import
    	that contain things like `$user_count = count_users(); $this->assertEquals( 3, $user_count['total_users'] );`
+   	1. As it turns out, it is not currently possible to write unit tests for export (see
+   		[Trac Ticket 39237][]).
 1. Incorporate the ideas for a generic [Export API](https://core.trac.wordpress.org/ticket/22435).
 1. Ultimately, I'd like to define a full-blown XML API.  See the `@todo` at the start of
 	./includes/export.php for some ideas on that XML API.  An XML API could be used by not
