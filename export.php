@@ -128,6 +128,20 @@ if ( isset( $_GET['download'] ) ) {
 	 */
 	$args = apply_filters( 'export_args', $args );
 
+	if ( 'all' !== $args['content'] ) {
+		$post_type_obj = get_post_type_object( $args['content'] );
+		if ( ! empty( $post_type_obj ) ) {
+			$args['post_type'] = $post_type_obj->name;
+		}
+	}
+
+	if ( ! empty( $args['start_date'] ) ) {
+		$args['start_date'] = date( 'Y-m-d', strtotime( $args['start_date'] ) );
+	}
+	if ( ! empty( $args['end_date'] ) ) {
+		$args['end_date'] = date( 'Y-m-d', strtotime( '+1 month', strtotime( $args['end_date'] ) ) );
+	}
+
 	export_wp( $args );
 	die();
 }
