@@ -1,0 +1,1 @@
+This file exists ONLY so that GitHub will create the tests/data directory.
