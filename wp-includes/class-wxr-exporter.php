@@ -2,8 +2,8 @@
 /**
  * WXR Export API
  *
- * @package XML
- * @subpackage WXR Export
+ * @package Export
+ * @subpackage WXR
  */
 
 require_once __DIR__ . '/class-wp-export-content.php';

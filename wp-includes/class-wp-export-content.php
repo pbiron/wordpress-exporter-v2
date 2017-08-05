@@ -1,6 +1,8 @@
 <?php
 /**
- * @package export
+ * WP Export API
+ *
+ * @package Export
  */
 
 require_once __DIR__ . '/../wp-includes/iterators.php';
