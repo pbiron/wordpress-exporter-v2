@@ -105,6 +105,10 @@
  * rules of RSS, so validating with a 1.0 schema would be useless, or worse).
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	die();
+}
+
 /**
  * Add our menu item to the tools.php menu.
  */
