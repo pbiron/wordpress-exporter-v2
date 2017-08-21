@@ -240,7 +240,6 @@ class WP_XMLWriter extends WP_XML {
 	 */
 	function __destruct() {
 		$this->endDocument();
-		$this->flush();
 	}
 
 	/**
@@ -617,6 +616,10 @@ class WP_XMLWriter extends WP_XML {
 	 * 					  buffer, the current contents of the memory buffer.
 	 */
 	function endDocument() {
+		if ( ! $this->opened ) {
+			return false;
+		}
+
 		$success = $this->writer->endDocument();
 		if ( $success ) {
 			$this->closed = true;
