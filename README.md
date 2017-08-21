@@ -20,6 +20,7 @@ This proposed rewrite of the standard WordPress exporter:
 	element, but does not export the "full" terms.  Thus, hierarchical relationship between
 	those terms are not represented (and cannot be produced by the importer), nor are term metas
 	and term descriptions.  In this version, the "full" terms are also exported in that case.
+1. Incorporates the UI/UX from [WordPress Importer Redux][].
 
 The above goals are completely independant of one another.  For example, if folks like the [WXR 1.3-proposed][]
 changes but hate the rest of my changes/fixes then those WXR changes can be encorporated
@@ -61,6 +62,11 @@ Want to experiment with the hooks mentions above?
 
 ## Change Log
 
+### 0.4
+
+* Incorporated UI/UX from [WordPress Importer Redux][]
+* Compatibility with PHP 5.2
+
 ### 0.3
 
 * Added Export API
@@ -79,13 +85,7 @@ Want to experiment with the hooks mentions above?
 
 ## To Do's ##
 
-1. Add unit tests
-   1. Unit testing for validity would be nice, but the XML Schema for [WXR 1.3-proposed][]
-   	  requires an [XML Schema 1.1][] processor.  All of the XML processors in a vanilla PHP install
-   	  that are able to validate XML instances only handle [XML Schema 1.0][] schemas...and
-   	  [XML Schema 1.0][] is not expressive enough to capture the rules of RSS (nor the
-   	  WXR extensibility rules in [WXR 1.3-proposed][]), so validating
-   	  with a 1.0 schema would be useless, or worse.
+1. Add more unit tests
 1. XML API
 	1. Should "intelligently" deal with characters that are outside the range of
 	   characters allowed by the [Char](https://www.w3.org/TR/xml/#NT-Char) production
