@@ -5,7 +5,7 @@
  * @package Export
  */
 
-require_once __DIR__ . '/../wp-includes/iterators.php';
+require_once dirname( __FILE__ ) . '/../wp-includes/iterators.php';
 
 /**
  * Represents a set of posts and other site data to be exported.

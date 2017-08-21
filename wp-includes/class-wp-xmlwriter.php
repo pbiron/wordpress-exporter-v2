@@ -62,7 +62,7 @@
  * @todo write DevHub Handbook documentation for this API (once it stabilizes).
  */
 
-require_once __DIR__ . '/wp-xml.php';
+require_once dirname( __FILE__ ) . '/wp-xml.php';
 
 /**
  * A light-weight wrapper around PHP's XMLWriter class that prevents writing

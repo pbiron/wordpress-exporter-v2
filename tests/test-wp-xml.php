@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../wp-includes/wp-xml.php';
+require_once dirname( __FILE__ ) . '/../wp-includes/wp-xml.php';
 
 /**
  * @group xml

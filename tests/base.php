@@ -1,6 +1,7 @@
 <?php
 
-require __DIR__ . '/../wp-includes/class-wxr-exporter.php';
+require_once dirname( __FILE__ ) . '/../wp-includes/class-wxr-exporter.php';
+require_once dirname( __FILE__ ) . '/../class-logger-cli.php';
 
 abstract class Exporter_UnitTestCase extends WP_UnitTestCase {
 	/**

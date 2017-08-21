@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../wp-includes/class-wp-xmlwriter.php';
+require_once dirname( __FILE__ ) . '/../wp-includes/class-wp-xmlwriter.php';
 
 /**
  * @group xml
@@ -12,7 +12,7 @@ class WP_XMLWriter_Tests extends Exporter_UnitTestCase {
 	protected $file;
 
 	function __construct() {
-		$this->file = __DIR__ . '/data/write.xml';
+		$this->file = dirname( __FILE__ ) . '/data/write.xml';
 	}
 
 	function setUp() {

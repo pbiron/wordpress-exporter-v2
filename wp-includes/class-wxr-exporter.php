@@ -6,8 +6,8 @@
  * @subpackage WXR
  */
 
-require_once __DIR__ . '/class-wp-export-content.php';
-require_once __DIR__ . '/class-wp-xmlwriter.php';
+require_once dirname( __FILE__ ) . '/class-wp-export-content.php';
+require_once dirname( __FILE__ ) . '/class-wp-xmlwriter.php';
 
 /**
  * Export to a WXR instance.

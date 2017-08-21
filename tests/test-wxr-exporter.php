@@ -1,7 +1,7 @@
 <?php
 
 require_once dirname( __FILE__ ) . '/base.php';
-require_once __DIR__ . '/../wp-includes/class-wxr-exporter.php';
+require_once dirname( __FILE__ ) . '/../wp-includes/class-wxr-exporter.php';
 
 /**
  * @group export
