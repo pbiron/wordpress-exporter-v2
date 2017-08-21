@@ -230,7 +230,7 @@ class Export_Content_Tests extends Exporter_UnitTestCase {
 
 
 	function test_posts_with_c3() {
- 		$export_content = new WP_Export_Content( array( 'post_type' => 'post', 'category' => 'C3' ) );
+ 		$export_content = new WP_Export_Content( array( 'post_type' => 'post', 'taxonomy' => array( 'category' => 'C3' ) ) );
 
 		// gather all the users, terms & posts
 		$users = array();

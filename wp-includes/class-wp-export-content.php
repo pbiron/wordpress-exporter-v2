@@ -32,22 +32,6 @@ class WP_Export_Content {
 	const CHUNK_SIZE = 100;
 
 	/**
-	 * Default values for export filters.
-	 *
-	 * @var array
-	 */
-	private static $default_filters = array(
-		'content' => null,
-		'post_ids' => null,
-		'post_type' => null,
-		'status' => null,
-		'author' => null,
-		'start_date' => null,
-		'end_date' => null,
-		'category' => null,
-	);
-
-	/**
 	 * User IDs to export.
 	 *
 	 * @var array
@@ -74,6 +58,20 @@ class WP_Export_Content {
 	 * @var array
 	 */
 	private $post_ids = array();
+
+	/**
+	 * Media IDs to export.
+	 *
+	 * @var array
+	 */
+	private $media_ids = array();
+
+	/**
+	 * Comment IDs to export.
+	 *
+	 * @var array
+	 */
+	private $comment_ids = array();
 
 	/**
 	 * Export filters.
@@ -130,12 +128,35 @@ class WP_Export_Content {
 	 * reflect what this class actually uses.
 	 */
 	function __construct( $filters = array() ) {
-		$this->filters = wp_parse_args( $filters, self::$default_filters );
+		$default_filters = array(
+			'content' => null,
+			'post_ids' => null,
+			'post_type' => null,
+			'status' => null,
+			'author' => null,
+			'start_date' => null,
+			'end_date' => null,
+			'taxonomy' => null,
+		);
+		$this->filters = wp_parse_args( $filters, $default_filters );
 
 		$this->post_ids = $this->calculate_post_ids();
+		$this->media_ids = $this->calculate_media_ids();
+		$this->comment_ids = $this->calculate_comment_ids();
 		$this->link_ids = $this->calculate_link_ids();
 		$this->user_ids = $this->calculate_user_ids();
 		$this->term_ids = $this->calculate_term_ids();
+	}
+
+	function get_counts() {
+		return (object) array(
+			'post_count' => count( $this->post_ids ),
+			'media_count' => count( $this->media_ids ),
+			'term_count' => count( $this->term_ids ),
+			'user_count' => count( $this->user_ids ),
+			'link_count' => count( $this->link_ids ),
+			'comment_count' => count( $this->comment_ids ),
+		);
 	}
 
 	/**
@@ -172,6 +193,10 @@ class WP_Export_Content {
 	 */
 	function post_ids() {
 		return $this->post_ids;
+	}
+
+	function media_ids() {
+		return $this->media_ids;
 	}
 
 	/**
@@ -265,6 +290,20 @@ class WP_Export_Content {
 	}
 
 	/**
+	 * Iterator over the media to export.
+	 *
+	 * @return WP_Map_Iterator
+	 */
+	function media() {
+		$iterator = new WP_IDs_Iterator( $this->media_ids, 'get_post', self::CHUNK_SIZE );
+		if ( is_wp_error( $iterator ) ) {
+			return array();
+		}
+
+		return new WP_Map_Iterator( $iterator, array( $this, 'exportify_post' ) );
+	}
+
+	/**
 	 * Augment a WP_User object for export.
 	 *
 	 * Adds user meta.
@@ -315,6 +354,7 @@ class WP_Export_Content {
 	 */
 	function exportify_term( $term ) {
 		global $wpdb;
+
 		$term->meta = array();
 
 		if ( 0 !== $term->parent ) {
@@ -363,8 +403,7 @@ class WP_Export_Content {
 
 		$cats = array();
 		foreach ( $link->link_category as $cat ) {
-			$term = get_term( $cat, 'link_category' );
-			$cats[] = $term->slug;
+			$cats[] = get_term( $cat, 'link_category' );
 		}
 
 		$link->link_category = $cats;
@@ -444,7 +483,7 @@ class WP_Export_Content {
 			$comment_user_ids = array_filter( $comment_user_ids );
 		}
 
-		if ( ! empty( $this->link_ids ) && 'all' === $this->filters['content'] ) {
+		if ( ! empty( $this->link_ids ) ) {
 			$IDs = $this->build_IN_condition( 'link_id', $this->link_ids, '%d' );
 			$link_owner_ids = $wpdb->get_col( "SELECT DISTINCT link_owner FROM $wpdb->links WHERE $IDs" );
 		}
@@ -474,15 +513,34 @@ class WP_Export_Content {
 	 * @return array Terms IDs to export.
 	 */
 	private function calculate_term_ids() {
+		global $wpdb;
 		$term_ids = array();
 
 		if ( 'all' === $this->filters['content'] ) {
 			$taxonomies = get_taxonomies();
 
-	 		$term_ids = (array) get_terms( $taxonomies, array( 'fields' => 'ids', 'get' => 'all' ) );
+	 		$term_ids = array_map( 'intval', $wpdb->get_col( "SELECT term_id FROM {$wpdb->terms}" ) );
 		}
-		elseif ( ! empty( $this->post_ids ) ) {
-			$term_ids = (array) get_terms( array( 'fields' => 'ids', 'object_ids' => $this->post_ids, 'get' => 'all' ) );
+		else {
+			// note: the reason we can't just do simple get_terms( 'object_ids' => ... ) calls here
+			// is because $wpdb->term_relationships.object_id isn't scoped to an "object type", hence,
+			// terms attached to a link with link_id = X would be returned when true === in_array( $this->post_ids, X ),
+			// an vice versa
+			// @todo: see if there's a trac ticket related to object_id that we can reference here to explain the need
+			if ( ! empty( $this->post_ids ) ) {
+				// @todo: find a more efficient way of doing this!!!
+				foreach ( $this->post_ids as $post_id ) {
+					$post = get_post( $post_id );
+					foreach ( get_object_taxonomies( $post ) as $tax ) {
+						$term_ids = array_merge( $term_ids,
+							wp_list_pluck( wp_get_object_terms( $post_id, $tax ), 'term_id' ) );
+					}
+				}
+			}
+			if ( ! empty( $this->link_ids ) ) {
+				$term_ids = array_merge( $term_ids,
+					wp_list_pluck( wp_get_object_terms( $this->link_ids, 'link_category' ), 'term_id' ) );
+			}
 		}
 
 		/**
@@ -515,8 +573,22 @@ class WP_Export_Content {
 		global $wpdb;
 
 		$link_ids = array();
-		if ( 'all' === $this->filters['content'] ) {
-			$link_ids = $wpdb->get_col( "SELECT link_id FROM $wpdb->links" );
+		if ( in_array( $this->filters['content'], array( 'all', 'links' ) ) ) {
+			$wheres = array();
+			$join = '';
+			if ( isset( $this->filters['link_relationship'] ) ) {
+				$wheres[] = $wpdb->prepare( 'link_rel LIKE %s', '%' . $this->filters['link_relationship'] . '%' );
+			}
+			if ( isset( $this->filters['taxonomy']['link_category'] ) ) {
+				$join = "INNER JOIN {$wpdb->term_relationships} AS tr ON (l.link_id = tr.object_id)";
+				$wheres[] = $wpdb->prepare( 'tr.term_taxonomy_id = %d', $this->filters['taxonomy']['link_category'] );
+			}
+			$where = implode( ' AND ', array_filter( $wheres ) );
+			if ( ! empty( $where ) ) {
+				$where = "WHERE $where";
+			}
+
+			$link_ids = $wpdb->get_col( "SELECT link_id FROM {$wpdb->links} as l $join $where" );
 		}
 
 		/**
@@ -548,9 +620,8 @@ class WP_Export_Content {
 		$this->post_type_where();
 		$this->status_where();
 		$this->author_where();
-		$this->start_date_where();
-		$this->end_date_where();
-		$this->category_where();
+		$this->date_where();
+		$this->terms_where();
 
 		$where = implode( ' AND ', array_filter( $this->wheres ) );
 		if ( $where ) {
@@ -559,8 +630,7 @@ class WP_Export_Content {
 
 		$join = implode( ' ', array_filter( $this->joins ) );
 
-		$post_ids = $wpdb->get_col( "SELECT ID FROM {$wpdb->posts} AS p $join $where" );
-		$post_ids = array_merge( $post_ids, $this->attachments_for_specific_post_types( $post_ids ) );
+		$post_ids = $wpdb->get_col( "SELECT DISTINCT ID FROM {$wpdb->posts} AS p $join $where" );
 
 		/**
 		 * Filter the post IDs to be exported.
@@ -576,6 +646,48 @@ class WP_Export_Content {
 		$post_ids = $this->topologically_sort_post_ids( $post_ids );
 
 		return $post_ids;
+	}
+
+	private function calculate_media_ids() {
+		global $wpdb;
+
+		if ( 'attachment' === $this->filters['post_type'] || 'all' === $this->filters['content'] ) {
+			$media_ids = $wpdb->get_col( "SELECT ID FROM {$wpdb->posts} WHERE post_type = 'attachment'" );
+		}
+		else {
+			$media_ids = $this->attachments_for_specific_post_types( $this->post_ids );
+		}
+
+		/**
+		 * Filter the media IDs to be exported.
+		 *
+		 * @param array $media_ids The post IDs to be exported.
+		 * @param array $filters ???
+		 */
+		$media_ids = array_map( 'intval', apply_filters( 'export_media_ids', $media_ids, $this->filters ) );
+
+		return $media_ids;
+	}
+
+	private function calculate_comment_ids() {
+		global $wpdb;
+
+		if ( empty( $this->post_ids ) && empty( $this->media_ids ) ) {
+			return array();
+		}
+
+		$in = $this->build_IN_condition( 'comment_post_id', array_merge( $this->post_ids, $this->media_ids ) );
+		$comment_ids = $wpdb->get_col( "SELECT comment_ID FROM {$wpdb->comments} WHERE $in AND comment_approved <> 'spam'" );
+
+		/**
+		 * Filter the comment IDs to be exported.
+		 *
+		 * @param array $comment_ids The comment IDs to be exported.
+		 * @param array $filters ???
+		 */
+		$comment_ids = array_map( 'intval', apply_filters( 'export_comment_ids', $comment_ids, $this->filters ) );
+
+		return $comment_ids;
 	}
 
 	/**
@@ -595,6 +707,7 @@ class WP_Export_Content {
 		}
 
 		$post_types = get_post_types( $post_types_filters );
+		unset( $post_types['attachment'] );
 		if ( ! $post_types ) {
 			$this->wheres[] = 'p.post_type IS NULL';
 
@@ -642,53 +755,44 @@ class WP_Export_Content {
 	/**
 	 *
 	 */
-	private function start_date_where() {
+	private function date_where() {
 		/**
 		 * @global wpdb $wpdb.
 		 */
 		global $wpdb;
 
-		$timestamp = strtotime( $this->filters['start_date'] );
-		if ( ! $timestamp ) {
-			return;
+		if ( isset( $this->filters['start_date'] ) ) {
+			$timestamp = strtotime( $this->filters['start_date'] );
+			if ( $timestamp ) {
+				$this->wheres[] = $wpdb->prepare( 'p.post_date >= %s', date( 'Y-m-d 00:00:00', $timestamp ) );
+			}
 		}
 
-		$this->wheres[] = $wpdb->prepare( 'p.post_date >= %s', date( 'Y-m-d 00:00:00', $timestamp ) );
+		if ( isset( $this->filters['end_date'] ) ) {
+			$timestamp = strtotime( $this->filters['end_date'] );
+			if ( $timestamp ) {
+				$this->wheres[] = $wpdb->prepare( 'p.post_date < %s', date( 'Y-m-d 00:00:00', $timestamp ) );
+			}
+		}
 	}
 
 	/**
 	 *
 	 */
-	private function end_date_where() {
+	private function terms_where() {
 		/**
 		 * @global wpdb $wpdb.
 		 */
 		global $wpdb;
 
-		$timestamp = strtotime( $this->filters['end_date'] );
-		if ( ! $timestamp ) {
-			return;
-		}
-
-		$this->wheres[] = $wpdb->prepare( 'p.post_date <= %s', date( 'Y-m-d 23:59:59', $timestamp ) );
-	}
-
-	/**
-	 *
-	 */
-	private function category_where() {
-		/**
-		 * @global wpdb $wpdb.
-		 */
-		global $wpdb;
-
-		$category = $this->find_category_from_any_object( $this->filters['category'] );
-		if ( ! $category ) {
+		$terms = $this->find_terms_from_any_object( $this->filters['taxonomy'] );
+		if ( empty( $terms ) ) {
 			return;
 		}
 
 		$this->joins[] = "INNER JOIN {$wpdb->term_relationships} AS tr ON (p.ID = tr.object_id)";
-		$this->wheres[] = $wpdb->prepare( 'tr.term_taxonomy_id = %d', $category->term_taxonomy_id );
+		$this->wheres[] = $this->build_IN_condition( 'tr.term_taxonomy_id',
+			wp_list_pluck ( $terms, 'term_taxonomy_id' ), '%d' );
 	}
 
 	/**
@@ -703,15 +807,16 @@ class WP_Export_Content {
 		 */
 		global $wpdb;
 
-		if ( ! $this->filters['post_type'] ) {
-			return array();
-		}
+// 		if ( ! $this->filters['post_type'] ) {
+// 			return array();
+// 		}
 
 		$attachment_ids = array();
 		while ( $batch_of_post_ids = array_splice( $post_ids, 0, self::CHUNK_SIZE ) ) {
-			$post_parent_condition = $this->build_IN_condition( 'post_parent', $batch_of_post_ids );
+			$post_parent_condition = $this->build_IN_condition( 'post_parent', $batch_of_post_ids, '%d' );
 			$attachment_ids = array_merge( $attachment_ids,
 				(array) $wpdb->get_col( "SELECT ID FROM {$wpdb->posts} WHERE post_type = 'attachment' AND $post_parent_condition" ) );
+//				(array) $wpdb->get_col( "SELECT ID FROM {$wpdb->posts} WHERE post_type = 'attachment'" ) );
 		}
 
 		return array_map( 'intval', $attachment_ids );
@@ -738,24 +843,30 @@ class WP_Export_Content {
 	}
 
 	/**
-	 * Get a category term.
+	 * Get terms from specific taxonomies.
 	 *
-	 * @param int|string|WP_Term $category
-	 * @return WP_Term|null|false WP_Term on success, null or false on error.
+	 * @param array $taxonomies Keys are taxonomy names, values are term_ids.
+	 * @return array WP_Term on success, null or false on error.
 	 */
-	private static function find_category_from_any_object( $category ) {
-		if ( is_numeric( $category ) ) {
-			return get_term( $category, 'category' );
-		}
-		elseif ( is_string( $category ) ) {
-			$term = term_exists( $category, 'category' );
-			return isset( $term['term_id'] )? get_term( $term['term_id'], 'category' ) : false;
-		}
-		elseif ( isset( $category->term_id ) ) {
-			return get_term( $category->term_id, 'category' );
+	private static function find_terms_from_any_object( $taxonomies ) {
+		$terms = array();
+
+		foreach ( (array) $taxonomies as $tax => $term ) {
+			if ( is_numeric( $term ) ) {
+				$terms[] = get_term( $term, $tax );
+			}
+			elseif ( is_string( $term ) ) {
+				$term = term_exists( $term, $tax );
+				if ( isset( $term['term_id'] ) ) {
+					$terms[] = get_term( $term['term_id'], $tax );
+				}
+			}
+			elseif ( isset( $term->term_id ) ) {
+				$terms[] = get_term( $term->term_id, $tax );
+			}
 		}
 
-		return false;
+		return $terms;
 	}
 
 	/**

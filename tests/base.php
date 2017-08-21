@@ -79,6 +79,13 @@ abstract class Exporter_UnitTestCase extends WP_UnitTestCase {
 		libxml_use_internal_errors( $this->libxml_use_internal_errors );
 	}
 
+	protected function get_exporter( $filters ) {
+		$exporter = new WXR_Exporter( $filters );
+		$logger = new WP_Exporter_Logger_CLI();
+		$exporter->set_logger($logger);
+
+		return $exporter;
+	}
 	/**
 	 * Populate common test content so that we can test both the Export API and the WXR Export
 	 * on the same content.

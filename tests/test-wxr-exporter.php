@@ -40,8 +40,8 @@ class WXR_Exporter_Tests extends Exporter_UnitTestCase {
 	}
 
 	function test_export_to_file() {
-		$exporter = new WXR_Exporter( array( 'content' => 'all' ) );
-		$this->file = __DIR__ . '/data/all_content.xml';
+		$exporter = $this->get_exporter( array( 'content' => 'all' ) );
+		$this->file = dirname( __FILE__ ) . '/data/all_content.xml';
 
 		$exporter->export ( $this->file );
 
@@ -50,7 +50,7 @@ class WXR_Exporter_Tests extends Exporter_UnitTestCase {
 
 
 	function test_export_to_stdout() {
-		$exporter = new WXR_Exporter( array( 'content' => 'all' ) );
+		$exporter = $this->get_exporter( array( 'content' => 'all' ) );
 
 		ob_start();
 		$exporter->export ( 'php://output' );
@@ -60,7 +60,7 @@ class WXR_Exporter_Tests extends Exporter_UnitTestCase {
 	}
 
 	function test_all_content() {
- 		$exporter = new WXR_Exporter( array( 'content' => 'all' ) );
+ 		$exporter = $this->get_exporter( array( 'content' => 'all' ) );
 		$wxr = $exporter->export ();
 
 		$this->is_well_formed( $wxr );
@@ -127,7 +127,7 @@ class WXR_Exporter_Tests extends Exporter_UnitTestCase {
 	}
 
 	function test_post_type_post() {
- 		$exporter = new WXR_Exporter( array( 'post_type' => 'post' ) );
+ 		$exporter = $this->get_exporter( array( 'post_type' => 'post' ) );
 		$wxr = $exporter->export ();
 
 		$this->is_well_formed( $wxr );
@@ -190,7 +190,7 @@ class WXR_Exporter_Tests extends Exporter_UnitTestCase {
 	}
 
 	function test_post_type_page() {
- 		$exporter = new WXR_Exporter( array( 'post_type' => 'page' ) );
+ 		$exporter = $this->get_exporter( array( 'post_type' => 'page' ) );
 		$wxr = $exporter->export ();
 
 		$this->is_well_formed( $wxr );
@@ -242,7 +242,7 @@ class WXR_Exporter_Tests extends Exporter_UnitTestCase {
 
 
 	function test_posts_with_c3() {
- 		$exporter = new WXR_Exporter( array( 'post_type' => 'post', 'category' => 'C3' ) );
+ 		$exporter = $this->get_exporter( array( 'post_type' => 'post', 'taxonomy' => array( 'category' => 'C3' ) ) );
 		$wxr = $exporter->export ();
 
 		$this->is_well_formed( $wxr );
@@ -311,7 +311,7 @@ class WXR_Exporter_Tests extends Exporter_UnitTestCase {
 			$writer->endElement();
 		}, 10, 2 );
 
-		$exporter = new WXR_Exporter( array( 'content' => 'all' ) );
+		$exporter = $this->get_exporter( array( 'content' => 'all' ) );
 		$wxr = $exporter->export ();
 
 		$this->is_well_formed( $wxr );
@@ -341,7 +341,7 @@ class WXR_Exporter_Tests extends Exporter_UnitTestCase {
 			return $term_ids;
 		}, 10, 2 );
 
-		$exporter = new WXR_Exporter( array( 'content' => 'taxonomies', 'taxonomies' => 'post_tag' ) );
+		$exporter = $this->get_exporter( array( 'content' => 'taxonomies', 'taxonomies' => 'post_tag' ) );
 		$wxr = $exporter->export ();
 
 		$this->is_well_formed( $wxr );

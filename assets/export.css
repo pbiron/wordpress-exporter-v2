@@ -1,0 +1,83 @@
+@import url('progress.css');
+
+.export-status {
+	width: 100%;
+
+	font-size: 14px;
+	line-height: 16px;
+	margin-bottom: 1em;
+}
+.export-status thead th {
+	width: 32%;
+	text-align: left;
+	font-size: 16px;
+	padding-bottom: 1em;
+}
+.export-status thead th:first-child {
+	width: 36%;
+}
+
+.export-status th,
+.export-status td {
+	padding: 0 0 8px;
+	margin-bottom: 6px;
+}
+
+#export-log
+{
+	border-collapse: collapse;
+}
+
+#export-log tbody {
+	max-height: 40em;
+}
+.export-status-indicator {
+	margin-bottom: 1em;
+}
+.export-status-indicator progress {
+	width: 100%;
+}
+.export-status-indicator .status {
+	text-align: center;
+}
+.export-status-indicator .status .dashicons {
+	color: #46B450;
+	font-size: 3rem;
+	height: auto;
+	width: auto;
+}
+#completed-total {
+	display: none;
+}
+#export-status-message {
+	border-top: 1px solid #f2f2f2;
+	height: 40px;
+	line-height: 40px;
+	margin: 20px 0;
+}
+
+#export-log tr
+{
+	border-left: 4px solid transparent;
+}
+
+#export-log tbody tr.info
+{
+	border-left-color: #46b450;
+}
+
+#export-log tbody tr.warning,
+#export-log tbody tr.notice
+{
+	border-left-color: #ffb900;
+}
+
+#export-log tbody tr.error
+{
+	border-left-color: #dc3232;
+}
+
+form#download
+{
+	display: none;
+}
