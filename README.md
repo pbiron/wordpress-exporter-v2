@@ -65,6 +65,7 @@ Want to experiment with the hooks mentions above?
 ### 0.4
 
 * Incorporated UI/UX from [WordPress Importer Redux][]
+* More extensive export filters
 * Compatibility with PHP 5.2
 
 ### 0.3
