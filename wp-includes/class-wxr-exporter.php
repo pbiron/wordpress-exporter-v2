@@ -648,11 +648,10 @@ class WXR_Exporter {
 
 		$this->writer->endElement(); // </item>
 
-		$post_type_object = get_post_type_object( $post->post_type );
 		$this->logger->info( sprintf(
 			__( 'Exported ' . ( 'attachment' === $post->post_type ? 'media' : 'post' ) . ' "%s" (%s)', 'wordpress-importer' ),
-			$post->post_title,
-			$post_type_object->labels->singular_name
+			! empty( $post->post_title ) ? $post->post_title : "#{$post->ID}",
+			self::get_post_type_name( $post->post_type )
 		) );
 		do_action( 'wxr_exporter.wrote.post', 1, (array) $post );
 	}
@@ -865,5 +864,19 @@ class WXR_Exporter {
 			$return_me = true;
 		}
 		return $return_me;
+	}
+
+	/**
+	 * Get the name of a post_type.
+	 *
+	 * @param $string $post_type The post_type whose name to get.
+	 * @return $string
+	 */
+	static function get_post_type_name( $post_type ) {
+		$post_type_obj = get_post_type_object( $post_type );
+
+		// need to guard for the case where $post_type is empty
+		// @see WXR_Exporter::post_type_where()
+		return $post_type_obj ? $post_type_obj->labels->singular_name : $post_type;
 	}
 }
