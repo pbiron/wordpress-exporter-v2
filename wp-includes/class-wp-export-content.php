@@ -517,9 +517,13 @@ class WP_Export_Content {
 		$term_ids = array();
 
 		if ( 'all' === $this->filters['content'] ) {
-			$taxonomies = get_taxonomies();
-
-	 		$term_ids = array_map( 'intval', $wpdb->get_col( "SELECT term_id FROM {$wpdb->terms}" ) );
+			// get all terms from registered taxonomies
+			// we limit to registered taxonomies so that we can call get_term() on the ids,
+			// whcih returns WP_Error if the tax is not registered
+			$where = 'WHERE ' . self::build_IN_condition( 'tt.taxonomy', get_taxonomies() );
+			$join = "INNER JOIN {$wpdb->term_taxonomy} as tt ON ( t.term_id = tt.term_id )";
+			$term_ids = $wpdb->get_col( "SELECT t.term_id from {$wpdb->terms} as t $join $where" );
+			unset( $where, $join );
 		}
 		else {
 			// note: the reason we can't just do simple get_terms( 'object_ids' => ... ) calls here
