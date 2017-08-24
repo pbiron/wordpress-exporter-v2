@@ -54,13 +54,20 @@ Want to experiment with the hooks mentions above?
 
 ## How do I use it?
 
-1. Install the plugin directly from GitHub. ([Download as a ZIP.](https://github.com/pbiron/WordPress-Importer/archive/master.zip))
+1. Install the plugin
+   1. Directly from GitHub. ([Download as a ZIP.](https://github.com/pbiron/WordPress-Importer/archive/master.zip))
+   1. Via [GitHub Updater][]
 2. Activate the plugin
 3. Head to Tools
 4. Select "Export (v2)"
 5. Follow the on-screen instructions.
 
 ## Change Log
+
+### 0.4.1
+
+* Limit terms to those whose taxonomy is registered
+* Improved log message for exported posts
 
 ### 0.4
 
